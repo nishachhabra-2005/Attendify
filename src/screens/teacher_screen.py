@@ -401,9 +401,6 @@ def teacher_screen_register():
 
     footer_dashboard()
 
-    
-    
-
 
 
     
