@@ -68,3 +68,4 @@ def voice_attendance_dialog(selected_subject_id):
         st.divider()
         df_results, logs = st.session_state.voice_attendance_results
         show_attendance_result(df_results, logs)
+
