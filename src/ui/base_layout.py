@@ -1,3 +1,4 @@
+
 import streamlit as st
 
 
@@ -8,11 +9,11 @@ def style_background_home():
         <style>
 
                 .stApp {
-                    background: #5865F2 !important;
+                    background: #0B0D12 !important;
                 }
 
                 .stApp div[data-testid="stColumn"]{
-                    background-color:#E0E3FF !important;
+                    background-color:#151823 !important;
                     padding:2.5rem !important;
                     border-radius: 5rem !important;
                     }
@@ -28,7 +29,7 @@ def style_background_dashboard():
         <style>
 
                 .stApp {
-                    background: #E0E3FF !important;
+                    background: #0B0D12 !important;
                 }
 
         </style>  
@@ -79,7 +80,7 @@ def style_base_layout():
 
             button{
                 border-radius: 1.5rem !important;
-                background-color: #5865F2 !important;
+                background-color: #8B5CF6 !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
@@ -88,7 +89,7 @@ def style_base_layout():
 
             button[kind="secondary"]{
                 border-radius: 1.5rem !important;
-                background-color: #EB459E !important;
+                background-color: #6D28D9 !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
@@ -97,7 +98,7 @@ def style_base_layout():
 
             button[kind="tertiary"]{
                 border-radius: 1.5rem !important;
-                background-color: black !important;
+                background-color: #252938 !important;
                 color: white !important;
                 padding: 10px 20px !important;
                 border: none !important;
