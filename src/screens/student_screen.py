@@ -312,15 +312,25 @@ def student_screen():
     with c1:
         header_dashboard()
 
+    
     with c2:
-        if st.button(
-            "Go back to Home",
-            type='secondary',
-            key='loginbackbtn',
-            shortcut="control+backspace"
-        ):
-            st.session_state['login_type'] = None
-            st.rerun()
+     st.subheader(f"Welcome, {student_data['name']}")
+
+     if st.button(
+        "← Back to Home",
+        type='secondary',
+        key='student_home_button',
+        shortcut="control+backspace",
+        width='stretch'
+    ):
+        st.session_state['login_type'] = None
+        st.session_state['is_logged_in'] = False
+        st.session_state['user_role'] = None
+
+        st.session_state.pop('student_data', None)
+
+        st.rerun()
+
 
     st.header('Login using FaceID', text_alignment='center')
     st.space()

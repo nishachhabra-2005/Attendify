@@ -51,12 +51,31 @@ def teacher_dashboard():
     with c1:
         header_dashboard()
 
+    
+    
     with c2:
-        st.subheader(f"""Welcome, {teacher_data['name']} """)
-        if st.button("Logout", type='secondary', key='loginbackbtn', shortcut="control+backspace"):
-            st.session_state['is_logged_in'] = False
-            del st.session_state.teacher_data
-            st.rerun()
+     st.subheader(f"Welcome, {teacher_data['name']}")
+
+     if st.button(
+        "← Back to Home",
+        type='secondary',
+        key='teacher_home_button',
+        shortcut="control+backspace",
+        width='stretch'
+    ):
+        st.session_state['login_type'] = None
+        st.session_state['is_logged_in'] = False
+        st.session_state['user_role'] = None
+
+        st.session_state.pop('teacher_data', None)
+        st.session_state.pop('current_teacher_tab', None)
+        st.session_state.pop('attendance_images', None)
+
+        st.session_state['teacher_login_type'] = 'login'
+
+        st.rerun()
+
+
 
     st.space()
 
