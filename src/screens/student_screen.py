@@ -28,9 +28,18 @@ def student_dashboard():
     with c2:
         st.subheader(f"Welcome, {student_data['name']}")
 
-        if st.button("Logout", type='secondary', key='loginbackbtn', shortcut="control+backspace"):
+        if st.button(
+            "← Back to Home",
+            type='secondary',
+            key='student_dashboard_home_button',
+            shortcut="control+backspace",
+            width='stretch'
+        ):
+            st.session_state['login_type'] = None
             st.session_state['is_logged_in'] = False
-            del st.session_state.student_data
+            st.session_state['user_role'] = None
+            st.session_state.pop('student_data', None)
+
             st.rerun()
 
     st.space()
@@ -312,25 +321,15 @@ def student_screen():
     with c1:
         header_dashboard()
 
-    
     with c2:
-     st.subheader(f"Welcome, {student_data['name']}")
-
-     if st.button(
-        "← Back to Home",
-        type='secondary',
-        key='student_home_button',
-        shortcut="control+backspace",
-        width='stretch'
-    ):
-        st.session_state['login_type'] = None
-        st.session_state['is_logged_in'] = False
-        st.session_state['user_role'] = None
-
-        st.session_state.pop('student_data', None)
-
-        st.rerun()
-
+        if st.button(
+            "← Back to Home",
+            type='secondary',
+            key='student_login_home_button',
+            width='stretch'
+        ):
+            st.session_state['login_type'] = None
+            st.rerun()
 
     st.header('Login using FaceID', text_alignment='center')
     st.space()
@@ -456,6 +455,7 @@ def student_screen():
 
                 else:
                     st.warning('Please enter your name!')
+
 
 
 
