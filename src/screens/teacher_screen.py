@@ -219,7 +219,6 @@ def teacher_tab_take_attendance():
                             'is_present': bool(is_present)
                         })
 
-                    # FIX: Only display results after creating the variables.
                     attendance_result_dialog(
                         pd.DataFrame(results),
                         attendance_to_log
@@ -287,6 +286,7 @@ def teacher_tab_attendance_records():
     records = get_attendance_for_teacher(teacher_id)
 
     if not records:
+        st.info("No attendance records found.")
         return
 
     data = []
@@ -294,36 +294,97 @@ def teacher_tab_attendance_records():
     for r in records:
         ts = r.get('timestamp')
 
+        # Get student details
+        student = r.get('students') or {}
+
+        # Handle a possible list response
+        if isinstance(student, list):
+            student = student[0] if student else {}
+
+        # Get subject details
+        subject = r.get('subjects') or {}
+
+        if isinstance(subject, list):
+            subject = subject[0] if subject else {}
+
+        student_name = student.get('name', 'Unknown Student')
+        student_id = r.get('student_id', 'N/A')
+
+        # Format timestamp
+        try:
+            formatted_time = (
+                datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                .strftime("%Y-%m-%d %I:%M %p")
+                if ts else "N/A"
+            )
+        except (ValueError, AttributeError):
+            formatted_time = ts or "N/A"
+
+        # Attendance status
+        is_present = bool(r.get('is_present', False))
+
         data.append({
-            "ts_group": ts.split(".")[0] if ts else None,
-            "Time": datetime.fromisoformat(ts).strftime("%Y-%m-%d %I:%M %p") if ts else "N'A",
-            "Subject": r['subjects']['name'],
-            "Subject Code": r['subjects']['subject_code'],
-            "is_present": bool(r.get('is_present', False))
+            "Student Name": student_name,
+            "Student ID": student_id,
+            "Subject": subject.get('name', 'Unknown Subject'),
+            "Subject Code": subject.get('subject_code', 'N/A'),
+            "Date & Time": formatted_time,
+            "Status": "Present" if is_present else "Absent"
         })
 
     df = pd.DataFrame(data)
 
-    summary = (
-        df.groupby(['ts_group', 'Time', 'Subject', 'Subject Code'])
-        .agg(
-            Present_Count=('is_present', 'sum'),
-            Total_Count=('is_present', 'count')
-        )
-        .reset_index()
+    # Sort newest attendance records first
+    df = df.sort_values(
+        by='Date & Time',
+        ascending=False
+    ).reset_index(drop=True)
+
+    # Attendance summary
+    total_records = len(df)
+    present_count = (df['Status'] == 'Present').sum()
+    absent_count = (df['Status'] == 'Absent').sum()
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("Total Records", total_records)
+    col2.metric("Present", int(present_count))
+    col3.metric("Absent", int(absent_count))
+
+    st.divider()
+
+    # Subject filter
+    subjects = ["All Subjects"] + sorted(
+        df['Subject'].dropna().unique().tolist()
     )
 
-    summary['Attendance Stats'] = (
-        "✅ " + summary['Present_Count'].astype(str) + " /"
-        + summary['Total_Count'].astype(str) + ' Students'
+    selected_subject = st.selectbox(
+        "Filter by Subject",
+        subjects
     )
 
-    display_df = (
-        summary.sort_values(by='ts_group', ascending=False)
-        [['Time', 'Subject', 'Subject Code', 'Attendance Stats']]
-    )
+    if selected_subject != "All Subjects":
+        display_df = df[
+            df['Subject'] == selected_subject
+        ]
+    else:
+        display_df = df
+
+    st.subheader("Individual Attendance Records")
 
     st.table(display_df)
+
+    # Download CSV
+    csv_data = display_df.to_csv(index=False).encode('utf-8-sig')
+
+    st.download_button(
+        label="Download Attendance Records (CSV)",
+        data=csv_data,
+        file_name="attendify_attendance_records.csv",
+        mime="text/csv",
+        icon=":material/download:",
+        width='stretch'
+    )
 
 
 def login_teacher(username, password):
@@ -504,6 +565,7 @@ def teacher_screen_register():
             width='stretch'
         ):
             st.session_state.teacher_login_type = 'login'
+
 
 
 
