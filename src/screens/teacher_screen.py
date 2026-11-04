@@ -323,7 +323,7 @@ def teacher_tab_attendance_records():
         [['Time', 'Subject', 'Subject Code', 'Attendance Stats']]
     )
 
-    st.dataframe(display_df, width='stretch', hide_index=True)
+    st.table(display_df)
 
 
 def login_teacher(username, password):
